@@ -168,3 +168,17 @@ The appointment system includes the following protections and features:
 - Administrators can manage appointment statuses.
 - Cancelled appointments release their reserved time slots.
 
+
+## Stripe Payment Processing
+
+SalonBook integrates Stripe Checkout for appointment payments.
+
+- Customers can initiate Stripe Checkout sessions.
+- Payment transactions are stored in MongoDB.
+- Successful and failed payment events are handled through Stripe webhooks.
+- Webhook signatures are verified using the configured Stripe webhook secret.
+- Repeated successful webhook events do not create duplicate transactions.
+- Payment and transaction information is available through protected API routes.
+
+Stripe secret keys and webhook secrets must be configured through environment variables.
+
