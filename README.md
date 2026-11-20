@@ -143,3 +143,14 @@ Authentication is handled by Better Auth.
 ## Project
 
 SalonBook is a full-stack salon appointment booking application designed to simplify salon service management, customer bookings, and online payments.
+
+## Authentication and Authorization
+
+SalonBook uses Better Auth for user authentication.
+
+- Authentication is handled through the Better Auth server configuration.
+- Protected API routes require a valid authenticated session.
+- Customer-only routes restrict access to customer accounts.
+- Admin-only routes restrict access to administrator accounts.
+- Environment variables are used to protect authentication secrets and configuration.
+
