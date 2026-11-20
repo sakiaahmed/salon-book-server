@@ -154,3 +154,17 @@ SalonBook uses Better Auth for user authentication.
 - Admin-only routes restrict access to administrator accounts.
 - Environment variables are used to protect authentication secrets and configuration.
 
+
+## Appointment Booking Rules
+
+The appointment system includes the following protections and features:
+
+- Customers can book appointments for active services.
+- Available time slots are retrieved dynamically for the selected date.
+- Past dates and past time slots are rejected.
+- Bangladesh timezone is used for appointment date and time validation.
+- Duplicate active bookings for the same slot are prevented.
+- Customers can cancel their own appointments.
+- Administrators can manage appointment statuses.
+- Cancelled appointments release their reserved time slots.
+
