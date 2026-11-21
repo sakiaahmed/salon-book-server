@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const { betterAuth } = require("better-auth");
@@ -18,6 +17,7 @@ const auth = betterAuth({
 
   trustedOrigins: [
     "http://localhost:3000",
+    "https://salonbook-client-omega.vercel.app",
     process.env.CLIENT_URL,
   ].filter(Boolean),
 
