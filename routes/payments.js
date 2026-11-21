@@ -739,6 +739,76 @@ const processPaidSession = async (event, session) => {
 };
 
 // ============================================
+// ADMIN PAYMENT RECOVERY
+// Temporary endpoint for recovering verified Stripe payments
+// ============================================
+
+router.post(
+  "/admin/reconcile-payment",
+  verifyToken,
+  verifyAdmin,
+  checkStripe,
+  async (req, res) => {
+    try {
+      const { sessionId } = req.body;
+
+      if (
+        typeof sessionId !== "string" ||
+        !sessionId.startsWith("cs_")
+      ) {
+        return res.status(400).json({
+          message: "A valid Stripe Checkout Session ID is required",
+        });
+      }
+
+      // Retrieve the actual Checkout Session directly from Stripe.
+      const session = await stripe.checkout.sessions.retrieve(
+        sessionId
+      );
+
+      // Never recover a payment that Stripe does not confirm as paid.
+      if (
+        session.status !== "complete" ||
+        session.payment_status !== "paid"
+      ) {
+        return res.status(400).json({
+          message: "Stripe has not confirmed this payment as paid",
+          paymentStatus: session.payment_status,
+        });
+      }
+
+      // Validate appointment/customer metadata and process payment.
+      // The existing function also checks amount, currency and session link.
+      await processPaidSession(
+        {
+          id: `manual_recovery_${session.id}`,
+          type: "manual.reconciliation",
+        },
+        session
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Payment successfully recovered",
+        sessionId: session.id,
+        paymentStatus: "paid",
+      });
+
+    } catch (error) {
+      console.error(
+        "Admin payment recovery error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        message: error.message || "Payment recovery failed",
+      });
+    }
+  }
+);
+
+
+// ============================================
 // 5. PROCESS FAILED OR EXPIRED PAYMENT
 // ============================================
 
