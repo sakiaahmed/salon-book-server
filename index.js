@@ -9,6 +9,8 @@ const { auth } = require("./auth");
 
 const servicesRouter = require("./routes/services");
 const appointmentsRouter = require("./routes/appointments");
+const profileRouter = require("./routes/profile");
+const usersRouter = require("./routes/users");
 
 const {
   router: paymentsRouter,
@@ -32,7 +34,6 @@ const normalizeOrigin = (value) => {
 const allowedOrigins = [
   "http://localhost:3000",
   "https://salonbook-client-omega.vercel.app",
-  "https://salonbook-client-6w0j5serq-assignment20.vercel.app",
   normalizeOrigin(process.env.CLIENT_URL),
 ].filter(Boolean);
 
@@ -41,7 +42,6 @@ console.log("Allowed CORS origins:", allowedOrigins);
 // CORS Configuration
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests without origin (Stripe, Postman, server-to-server)
     if (!origin) {
       return callback(null, true);
     }
@@ -89,6 +89,8 @@ app.use(express.json());
 app.use("/api/services", servicesRouter);
 app.use("/api/appointments", appointmentsRouter);
 app.use("/api/payments", paymentsRouter);
+app.use("/api/profile", profileRouter);
+app.use("/api/users", usersRouter);
 
 // Health Check
 app.get("/", (req, res) => {

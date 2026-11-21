@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const { betterAuth } = require("better-auth");
@@ -45,6 +46,12 @@ const auth = betterAuth({
       isBlocked: {
         type: "boolean",
         defaultValue: false,
+        input: false,
+      },
+
+      phoneNumber: {
+        type: "string",
+        required: false,
         input: false,
       },
     },

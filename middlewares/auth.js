@@ -26,7 +26,6 @@ const verifyToken = async (req, res, next) => {
 
   let payload;
 
-  // Verify JWT
   try {
     const result = await jwtVerify(token, JWKS, {
       issuer: SERVER_URL,
@@ -42,7 +41,6 @@ const verifyToken = async (req, res, next) => {
     });
   }
 
-  // Find current user from MongoDB
   try {
     const userId = payload.sub || payload.id;
 
@@ -62,24 +60,23 @@ const verifyToken = async (req, res, next) => {
       });
     }
 
-    // Check blocked status
     if (currentUser.isBlocked === true) {
       return res.status(403).json({
         message: "Your account has been blocked",
       });
     }
 
-    // Attach current database user
     req.user = {
       id: currentUser._id.toString(),
       email: currentUser.email,
       name: currentUser.name,
+      image: currentUser.image || "",
+      phoneNumber: currentUser.phoneNumber || "",
       role: currentUser.role || "customer",
       isBlocked: currentUser.isBlocked === true,
     };
 
     next();
-
   } catch (error) {
     console.error("User verification failed:", error.message);
 
@@ -89,7 +86,6 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-// Verify user role
 const verifyRole = (roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
