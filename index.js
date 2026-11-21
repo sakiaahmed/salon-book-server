@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -17,11 +16,27 @@ const {
 
 const app = express();
 
+// Allowed frontend origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://salonbook-client-omega.vercel.app",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+// CORS Configuration
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    process.env.CLIENT_URL,
-  ].filter(Boolean),
+  origin: (origin, callback) => {
+    // Allow requests without origin (Postman/server-to-server)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
 
   credentials: true,
 
@@ -33,12 +48,17 @@ const corsOptions = {
     "PATCH",
     "OPTIONS",
   ],
+
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+  ],
 };
 
 app.use(cors(corsOptions));
 
 // Stripe Webhook
-// IMPORTANT: This must be before express.json()
+// IMPORTANT: Must be before express.json()
 app.post(
   "/api/payments/webhook",
   express.raw({ type: "application/json" }),
