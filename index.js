@@ -32,6 +32,7 @@ const normalizeOrigin = (value) => {
 const allowedOrigins = [
   "http://localhost:3000",
   "https://salonbook-client-omega.vercel.app",
+  "https://salonbook-client-6w0j5serq-assignment20.vercel.app",
   normalizeOrigin(process.env.CLIENT_URL),
 ].filter(Boolean);
 
