@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const express = require("express");
@@ -16,24 +17,41 @@ const {
 
 const app = express();
 
+// Normalize frontend origins
+const normalizeOrigin = (value) => {
+  if (!value || typeof value !== "string") return null;
+
+  try {
+    return new URL(value.trim()).origin;
+  } catch {
+    return null;
+  }
+};
+
 // Allowed frontend origins
 const allowedOrigins = [
   "http://localhost:3000",
   "https://salonbook-client-omega.vercel.app",
-  process.env.CLIENT_URL,
+  normalizeOrigin(process.env.CLIENT_URL),
 ].filter(Boolean);
+
+console.log("Allowed CORS origins:", allowedOrigins);
 
 // CORS Configuration
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests without origin (Postman/server-to-server)
+    // Allow requests without origin (Stripe, Postman, server-to-server)
     if (!origin) {
       return callback(null, true);
     }
 
-    if (allowedOrigins.includes(origin)) {
+    const normalizedOrigin = normalizeOrigin(origin);
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
       return callback(null, true);
     }
+
+    console.warn("Blocked CORS origin:", origin);
 
     return callback(new Error("Not allowed by CORS"));
   },
@@ -47,11 +65,6 @@ const corsOptions = {
     "DELETE",
     "PATCH",
     "OPTIONS",
-  ],
-
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization",
   ],
 };
 
